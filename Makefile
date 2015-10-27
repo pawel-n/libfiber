@@ -1,5 +1,5 @@
 
-all: libfiber.so bin/echo_server runtests
+all: libfiber.so bin/echo_server
 
 VPATH += example src test submodules/libev
 
@@ -151,6 +151,13 @@ TESTS= \
 
 CC ?= /usr/bin/c99
 
+INSTALL = install -c
+INSTALLDATA = install -c -m 644
+
+prefix = /usr/local
+libdir = $(prefix)/lib
+includedir = $(prefix)/include
+
 OBJS = $(patsubst %.c,bin/%.o,$(CFILES))
 PICOBJS = $(patsubst %.c,bin/%.pic.o,$(CFILES))
 TESTBINARIES = $(patsubst %,bin/%,$(TESTS))
@@ -199,6 +206,12 @@ coveragereport: runtests
 	- lcov --directory `pwd` --capture --output-file bin/app.info
 	- mkdir -p bin/lcov
 	genhtml bin/app.info -o bin/lcov
+
+.PHONY: install
+install: all
+	$(INSTALL) libfiber.so $(libdir)
+	$(INSTALLDATA) $(INCLUDES) $(includedir)
+
 
 clean:
 	rm -rf bin/* libfiber.so
